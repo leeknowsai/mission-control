@@ -213,7 +213,7 @@ Respond with ONLY valid JSON in this format:
     // Use OpenClaw API to get messages
     let response = null;
     for (let i = 0; i < 30; i++) { // Poll for up to 30 seconds
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Get messages via OpenClaw API
       const transcriptMessages = await getMessagesFromOpenClaw(sessionKey);

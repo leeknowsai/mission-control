@@ -186,7 +186,7 @@ If planning is complete, respond with JSON:
     const initialMsgCount = getMessagesFromTranscript(task.planning_session_key!).length;
     
     for (let i = 0; i < 30; i++) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       const transcriptMessages = getMessagesFromTranscript(task.planning_session_key!);
       console.log('[Planning] Answer poll - transcript messages:', transcriptMessages.length, 'initial:', initialMsgCount);
