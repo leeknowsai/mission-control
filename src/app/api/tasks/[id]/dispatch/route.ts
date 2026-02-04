@@ -141,11 +141,13 @@ When complete, reply with:
 
 If you need help or clarification, ask me (Charlie).`;
 
-    // Send message to agent's session using sessions_send
+    // Send message to agent's session using chat.send
     try {
-      // Use the label from openclaw_session_id for routing
-      await client.call('sessions.send', {
-        label: session.openclaw_session_id,
+      // Use sessionKey for routing to the agent's session
+      // Format: agent:main:{openclaw_session_id}
+      const sessionKey = `agent:main:${session.openclaw_session_id}`;
+      await client.call('chat.send', {
+        sessionKey,
         message: taskMessage
       });
 
