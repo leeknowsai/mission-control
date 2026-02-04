@@ -316,7 +316,7 @@ broadcast({
 
 ## Success Criteria
 
-1. Chris adds task to INBOX
+1. User adds task to INBOX
 2. Within 60 seconds, sees it move to ASSIGNED in real-time (no refresh)
 3. Agent counter shows "Active Sub-Agents: 1"
 4. Opens task detail, sees Activity Log with entries like:

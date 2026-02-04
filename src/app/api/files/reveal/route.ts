@@ -22,12 +22,10 @@ export async function POST(request: NextRequest) {
     // Expand tilde
     const expandedPath = filePath.replace(/^~/, process.env.HOME || '');
 
-    // Security: Ensure path is within allowed directories
+    // Security: Ensure path is within allowed directories (from env config)
     const allowedPaths = [
       process.env.WORKSPACE_BASE_PATH?.replace(/^~/, process.env.HOME || ''),
       process.env.PROJECTS_PATH?.replace(/^~/, process.env.HOME || ''),
-      '${PROJECTS_PATH}',
-      '${WORKSPACE_BASE_PATH}',
     ].filter(Boolean) as string[];
 
     const normalizedPath = path.normalize(expandedPath);

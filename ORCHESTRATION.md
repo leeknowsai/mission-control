@@ -75,8 +75,8 @@ Activity types:
 
 ```bash
 # Step 1: Actually create the file
-mkdir -p ${PROJECTS_PATH}/homepage
-cat > ${PROJECTS_PATH}/homepage/index.html << 'EOF'
+mkdir -p $PROJECTS_PATH/homepage
+cat > $PROJECTS_PATH/homepage/index.html << 'EOF'
 <!DOCTYPE html>
 <html>
 <head><title>Homepage</title></head>
@@ -90,7 +90,7 @@ curl -X POST http://localhost:3000/api/tasks/{TASK_ID}/deliverables \
   -d '{
     "deliverable_type": "file",
     "title": "Homepage Design",
-    "path": "${PROJECTS_PATH}/homepage/index.html",
+    "path": "$PROJECTS_PATH/homepage/index.html",
     "description": "Main homepage with responsive layout"
   }'
 ```
@@ -100,7 +100,7 @@ The API will return a `warning` field if the file doesn't exist:
 {
   "id": "...",
   "title": "Homepage Design",
-  "warning": "File does not exist at path: ${PROJECTS_PATH}/homepage/index.html. Please create the file."
+  "warning": "File does not exist at path: $PROJECTS_PATH/homepage/index.html. Please create the file."
 }
 ```
 
@@ -136,8 +136,8 @@ curl -X POST $BASE_URL/api/tasks/$TASK_ID/subagent \
   -d '{"openclaw_session_id": "subagent-'$(date +%s)'", "agent_name": "Designer"}'
 
 # 3. Sub-agent does work and creates file...
-mkdir -p ${PROJECTS_PATH}/my-project
-echo "<html><body>Hello World</body></html>" > ${PROJECTS_PATH}/my-project/output.html
+mkdir -p $PROJECTS_PATH/my-project
+echo "<html><body>Hello World</body></html>" > $PROJECTS_PATH/my-project/output.html
 
 # 4. Register the deliverable
 curl -X POST $BASE_URL/api/tasks/$TASK_ID/deliverables \
@@ -145,7 +145,7 @@ curl -X POST $BASE_URL/api/tasks/$TASK_ID/deliverables \
   -d '{
     "deliverable_type": "file",
     "title": "Completed Design",
-    "path": "${PROJECTS_PATH}/my-project/output.html",
+    "path": "$PROJECTS_PATH/my-project/output.html",
     "description": "Final design with all requested features"
   }'
 
@@ -237,13 +237,13 @@ Then refresh and watch for:
 }
 ```
 
-The file will be saved at `${PROJECTS_PATH}/{relativePath}`
+The file will be saved at `$PROJECTS_PATH/{relativePath}`
 
 ## File Download Query Parameters (for remote agents)
 
 ```
 GET /api/files/download?relativePath=project-name/filename.html
-GET /api/files/download?path=${PROJECTS_PATH}/project-name/filename.html
+GET /api/files/download?path=$PROJECTS_PATH/project-name/filename.html
 GET /api/files/download?relativePath=project-name/filename.html&raw=true
 ```
 

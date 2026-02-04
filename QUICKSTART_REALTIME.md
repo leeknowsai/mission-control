@@ -1,6 +1,6 @@
 # Real-Time Features - Quick Start Guide
 
-## 🚀 For Chris: Getting Started on M4
+## 🚀 Getting Started
 
 ### 1. Pull Latest Code
 
@@ -66,7 +66,7 @@ When you click on a task, you now see **4 tabs**:
 
 ### Logging Activities
 
-When orchestrating tasks, log activities so Chris can see what's happening:
+When orchestrating tasks, log activities so users can see what's happening:
 
 ```typescript
 // Log when you triage a task

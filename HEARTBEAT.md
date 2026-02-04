@@ -95,8 +95,8 @@ curl -X POST http://YOUR_SERVER_IP:3000/api/tasks/{TASK_ID}/subagent \
 
 ### 4. Sub-agent creates files via UPLOAD API
 
-**IMPORTANT: You are running on a different machine than Mission Control!**
-You CANNOT write directly to `${HOME}/`. Instead, use the upload API to send files to Mission Control.
+**IMPORTANT: You may be running on a different machine than Mission Control!**
+You may not have direct filesystem access. Use the upload API to send files to Mission Control.
 
 ```bash
 # Upload a file to Mission Control server
@@ -110,14 +110,14 @@ curl -X POST http://YOUR_SERVER_IP:3000/api/files/upload \
 
 The API will:
 - Create the directory structure automatically
-- Save the file at `${PROJECTS_PATH}/{project-name}/index.html`
+- Save the file at `$PROJECTS_PATH/{project-name}/index.html`
 - Return the full path in the response
 
 Response example:
 ```json
 {
   "success": true,
-  "path": "${PROJECTS_PATH}/dashboard-redesign/index.html",
+  "path": "$PROJECTS_PATH/dashboard-redesign/index.html",
   "relativePath": "dashboard-redesign/index.html",
   "size": 1234
 }
@@ -132,7 +132,7 @@ Before registering deliverables, you can verify files exist and read their conte
 curl -s "http://YOUR_SERVER_IP:3000/api/files/download?relativePath={project-name}/index.html"
 
 # Download via full path
-curl -s "http://YOUR_SERVER_IP:3000/api/files/download?path=${PROJECTS_PATH}/{project-name}/index.html"
+curl -s "http://YOUR_SERVER_IP:3000/api/files/download?path=$PROJECTS_PATH/{project-name}/index.html"
 
 # Get raw file content (no JSON wrapper)
 curl -s "http://YOUR_SERVER_IP:3000/api/files/download?relativePath={project-name}/index.html&raw=true"
@@ -150,7 +150,7 @@ curl -X POST http://YOUR_SERVER_IP:3000/api/tasks/{TASK_ID}/deliverables \
   -d '{
     "deliverable_type": "file",
     "title": "Homepage Design",
-    "path": "${PROJECTS_PATH}/{project-name}/index.html",
+    "path": "$PROJECTS_PATH/{project-name}/index.html",
     "description": "Completed design with responsive layout"
   }'
 ```
@@ -180,13 +180,13 @@ curl -X PATCH http://YOUR_SERVER_IP:3000/api/tasks/{TASK_ID} \
 
 All project files are stored on the Mission Control server at:
 ```
-${PROJECTS_PATH}/{project-name}/
+$PROJECTS_PATH/{project-name}/
 ```
 
 **IMPORTANT: Cross-Machine Architecture**
-- You (Charlie) run on the M1 Mac
-- Mission Control runs on the M4 Mac at YOUR_SERVER_IP
-- You CANNOT directly access `${HOME}/` - that path doesn't exist on your machine!
+- The orchestrator may run on a different machine than Mission Control
+- Mission Control runs on the server at YOUR_SERVER_IP
+- You may not have direct filesystem access to the projects directory
 - Use the `/api/files/upload` endpoint to send files to Mission Control
 
 ## API Base URL
@@ -209,7 +209,7 @@ If ANY of these are false, take action instead of saying HEARTBEAT_OK.
 
 ## Common Mistakes to Avoid
 
-1. **DON'T** try to write files to `${HOME}/` - that path is on the M4, not your machine!
+1. **DON'T** try to write files directly to the server filesystem - use the upload API!
 2. **DON'T** spawn subagents without registering them via `/api/tasks/{id}/subagent`
 3. **DON'T** register deliverables for files that don't exist on the Mission Control server
 4. **DON'T** leave tasks stuck in IN_PROGRESS after work is done

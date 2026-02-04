@@ -10,7 +10,8 @@ import { readFileSync, existsSync, statSync } from 'fs';
 import path from 'path';
 
 // Base directory for all project files - must match upload endpoint
-const PROJECTS_BASE = '${PROJECTS_PATH}';
+// Set via PROJECTS_PATH env var (e.g., ~/projects or /var/www/projects)
+const PROJECTS_BASE = (process.env.PROJECTS_PATH || '~/projects').replace(/^~/, process.env.HOME || '');
 
 // MIME types for common file extensions
 const MIME_TYPES: Record<string, string> = {

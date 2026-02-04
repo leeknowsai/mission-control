@@ -23,12 +23,10 @@ export async function GET(request: NextRequest) {
   const expandedPath = filePath.replace(/^~/, process.env.HOME || '');
   const normalizedPath = path.normalize(expandedPath);
 
-  // Security check
+  // Security check - only allow paths from environment config
   const allowedPaths = [
     process.env.WORKSPACE_BASE_PATH?.replace(/^~/, process.env.HOME || ''),
     process.env.PROJECTS_PATH?.replace(/^~/, process.env.HOME || ''),
-    '${PROJECTS_PATH}',
-    '${WORKSPACE_BASE_PATH}',
   ].filter(Boolean) as string[];
 
   const isAllowed = allowedPaths.some(allowed =>

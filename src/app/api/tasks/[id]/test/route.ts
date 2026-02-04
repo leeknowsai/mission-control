@@ -59,7 +59,8 @@ interface TestResponse {
   newStatus?: string;
 }
 
-const SCREENSHOTS_DIR = '${PROJECTS_PATH}/.screenshots';
+// Screenshots stored in projects directory - set via PROJECTS_PATH env var
+const SCREENSHOTS_DIR = ((process.env.PROJECTS_PATH || '~/projects').replace(/^~/, process.env.HOME || '')) + '/.screenshots';
 
 /**
  * POST /api/tasks/[id]/test

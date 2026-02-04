@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Mission Control will be documented in this file.
+All notable changes to Mission Control will be documented in this file. 
 
 ## [Unreleased]
 
@@ -8,7 +8,7 @@ All notable changes to Mission Control will be documented in this file.
 
 **🌐 Cross-Machine File Delivery**
 - **File Upload API** (`POST /api/files/upload`): Remote agents (e.g., on M1 Mac) can now upload files to Mission Control server (M4 Mac) via HTTP
-- Files saved to `${PROJECTS_PATH}/{relativePath}`
+- Files saved to `$PROJECTS_PATH/{relativePath}`
 - Path traversal security protection
 - Returns full path for deliverable registration
 
@@ -81,7 +81,7 @@ All notable changes to Mission Control will be documented in this file.
 - Path expansion utilities (`~` → home directory)
 
 ### Changed
-- All hardcoded paths removed (previously: `/Users/charlie`, `${HOME}`)
+- All hardcoded paths removed (now uses environment variables)
 - All hardcoded IPs removed (previously: `localhost`)
 - `charlie-orchestration.ts` now uses config system
 - Task API routes broadcast full task objects with joins

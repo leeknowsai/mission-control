@@ -92,7 +92,7 @@
 - [ ] Test under normal load
 
 ### User Feedback
-- [ ] Chris can see real-time updates
+- [ ] User can see real-time updates
 - [ ] Task detail tabs are intuitive
 - [ ] Activity log provides useful information
 - [ ] Agent counter is accurate

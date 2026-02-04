@@ -339,15 +339,15 @@ These approaches were tried and **do not work**:
 ## Cross-Machine Orchestration
 
 Mission Control supports orchestration across multiple machines. For example:
-- **Mission Control** runs on your M4 Mac (server)
-- **Charlie** (orchestrating LLM) runs on an M1 Mac (client)
+- **Mission Control** runs on your server
+- **Charlie** (orchestrating LLM) runs on a different machine
 
 ### How It Works
 
-Since Charlie can't directly write to the M4's filesystem, use the **File Upload API**:
+Since the orchestrator can't directly write to the server's filesystem, use the **File Upload API**:
 
 ```bash
-# 1. Charlie uploads file content via HTTP
+# 1. Upload file content via HTTP
 curl -X POST http://YOUR_SERVER_IP:3000/api/files/upload \
   -H "Content-Type: application/json" \
   -d '{
@@ -355,7 +355,7 @@ curl -X POST http://YOUR_SERVER_IP:3000/api/files/upload \
     "content": "<!DOCTYPE html>..."
   }'
 
-# Response: {"path": "${PROJECTS_PATH}/project-name/index.html", ...}
+# Response: {"path": "$PROJECTS_PATH/project-name/index.html", ...}
 
 # 2. Register the deliverable using the returned path
 curl -X POST http://YOUR_SERVER_IP:3000/api/tasks/{TASK_ID}/deliverables \
@@ -363,13 +363,13 @@ curl -X POST http://YOUR_SERVER_IP:3000/api/tasks/{TASK_ID}/deliverables \
   -d '{
     "deliverable_type": "file",
     "title": "Homepage",
-    "path": "${PROJECTS_PATH}/project-name/index.html"
+    "path": "$PROJECTS_PATH/project-name/index.html"
   }'
 ```
 
 See `HEARTBEAT.md` for full orchestration instructions that can be injected into your LLM's context.
 
-## Charlie (or your Master Agents Name, Charlie is mine) - The Master Orchestrator 🦞
+## Charlie - The Master Orchestrator 🦞
 
 Charlie is the default master agent who coordinates all other agents. Charlie:
 

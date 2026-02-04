@@ -140,7 +140,7 @@ PROJECTS_PATH=~/Documents/Shared/projects
 ### Path Variables
 
 - `~` expands to your home directory
-- Paths can be absolute: `${HOME}/workspace`
+- Paths can be absolute: `/home/user/workspace`
 - Paths can be relative: `./workspace`
 
 ## 🔌 OpenClaw Gateway Setup
