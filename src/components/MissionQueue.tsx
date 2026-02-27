@@ -6,6 +6,10 @@ import { useMissionControl } from '@/lib/store';
 import type { Task, TaskStatus } from '@/lib/types';
 import { TaskModal } from './TaskModal';
 import { formatDistanceToNow } from 'date-fns';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import dynamic from 'next/dynamic';
+
+const TaskDagView = dynamic(() => import('./task-dag-view'), { ssr: false });
 
 interface MissionQueueProps {
   workspaceId?: string;
@@ -94,43 +98,76 @@ export function MissionQueue({ workspaceId }: MissionQueueProps) {
         </button>
       </div>
 
-      {/* Kanban Columns */}
-      <div className="flex-1 flex gap-3 p-3 overflow-x-auto">
-        {COLUMNS.map((column) => {
-          const columnTasks = getTasksByStatus(column.id);
-          return (
-            <div
-              key={column.id}
-              className={`flex-1 min-w-[220px] max-w-[300px] flex flex-col bg-mc-bg rounded-lg border border-mc-border/50 border-t-2 ${column.color}`}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, column.id)}
+      {/* Kanban / DAG tabs */}
+      <Tabs defaultValue="kanban" className="flex-1 flex flex-col overflow-hidden">
+        <div className="px-3 pt-2 border-b border-mc-border">
+          <TabsList className="h-8 bg-mc-bg-secondary border border-mc-border p-0.5">
+            <TabsTrigger
+              value="kanban"
+              className="h-7 px-3 text-xs data-[state=active]:bg-mc-bg data-[state=active]:text-white text-mc-text-secondary"
             >
-              {/* Column Header */}
-              <div className="p-2 border-b border-mc-border flex items-center justify-between">
-                <span className="text-xs font-medium uppercase text-mc-text-secondary">
-                  {column.label}
-                </span>
-                <span className="text-xs bg-mc-bg-tertiary px-2 py-0.5 rounded text-mc-text-secondary">
-                  {columnTasks.length}
-                </span>
-              </div>
+              Kanban
+            </TabsTrigger>
+            <TabsTrigger
+              value="dag"
+              className="h-7 px-3 text-xs data-[state=active]:bg-mc-bg data-[state=active]:text-white text-mc-text-secondary"
+            >
+              DAG
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-              {/* Tasks */}
-              <div className="flex-1 overflow-y-auto p-2 space-y-2">
-                {columnTasks.map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    onDragStart={handleDragStart}
-                    onClick={() => setEditingTask(task)}
-                    isDragging={draggedTask?.id === task.id}
-                  />
-                ))}
-              </div>
+        {/* Kanban view */}
+        <TabsContent value="kanban" className="flex-1 overflow-hidden m-0 data-[state=active]:flex data-[state=active]:flex-col">
+          <div className="flex-1 flex gap-3 p-3 overflow-x-auto">
+            {COLUMNS.map((column) => {
+              const columnTasks = getTasksByStatus(column.id);
+              return (
+                <div
+                  key={column.id}
+                  className={`flex-1 min-w-[220px] max-w-[300px] flex flex-col bg-mc-bg rounded-lg border border-mc-border/50 border-t-2 ${column.color}`}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, column.id)}
+                >
+                  {/* Column Header */}
+                  <div className="p-2 border-b border-mc-border flex items-center justify-between">
+                    <span className="text-xs font-medium uppercase text-mc-text-secondary">
+                      {column.label}
+                    </span>
+                    <span className="text-xs bg-mc-bg-tertiary px-2 py-0.5 rounded text-mc-text-secondary">
+                      {columnTasks.length}
+                    </span>
+                  </div>
+
+                  {/* Tasks */}
+                  <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                    {columnTasks.map((task) => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onDragStart={handleDragStart}
+                        onClick={() => setEditingTask(task)}
+                        isDragging={draggedTask?.id === task.id}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </TabsContent>
+
+        {/* DAG view */}
+        <TabsContent value="dag" className="flex-1 overflow-hidden m-0 data-[state=active]:flex data-[state=active]:flex-col">
+          {workspaceId ? (
+            <TaskDagView tasks={tasks} workspaceId={workspaceId} />
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-mc-text-secondary text-sm">
+              No workspace selected
             </div>
-          );
-        })}
-      </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* Modals */}
       {showCreateModal && (

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { NavBar } from '@/components/nav-bar';
 
 export const metadata: Metadata = {
-  title: 'Mission Control',
-  description: 'AI Agent Orchestration Dashboard',
+  title: 'LeeAgentsOffice',
+  description: 'AI Agent Orchestration Dashboard — Mission Control for Claude Code Teams',
   icons: {
     icon: '/favicon.svg',
   },
@@ -22,7 +23,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-mc-bg text-mc-text min-h-screen">{children}</body>
+      <body className="bg-mc-bg text-mc-text min-h-screen">
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }

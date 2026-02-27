@@ -162,6 +162,63 @@ CREATE TABLE IF NOT EXISTS task_deliverables (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
+-- Lifecycle phases (7-phase pipeline per project)
+CREATE TABLE IF NOT EXISTS lifecycle_phases (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  project_id TEXT NOT NULL,
+  phase TEXT NOT NULL CHECK(phase IN ('requirements','planning','research','implementation','testing','review','deploy')),
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending','active','blocked','complete','skipped')),
+  agent_id TEXT,
+  started_at TEXT,
+  completed_at TEXT,
+  plan_file_path TEXT,
+  metadata TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Task dependency edges for DAG
+CREATE TABLE IF NOT EXISTS task_dependencies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  depends_on_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  dep_type TEXT DEFAULT 'blocks' CHECK(dep_type IN ('blocks','soft')),
+  created_at TEXT DEFAULT (datetime('now')),
+  UNIQUE(task_id, depends_on_id)
+);
+
+-- Sync log for bidirectional file sync
+CREATE TABLE IF NOT EXISTS sync_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  source TEXT NOT NULL CHECK(source IN ('dashboard','filesystem')),
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  change TEXT NOT NULL,
+  conflict_resolved INTEGER DEFAULT 0,
+  resolution TEXT,
+  timestamp TEXT DEFAULT (datetime('now'))
+);
+
+-- Activity events for structured timeline
+CREATE TABLE IF NOT EXISTS activity_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  agent_id TEXT NOT NULL,
+  event_type TEXT NOT NULL CHECK(event_type IN ('tool_call','file_edit','message','status_change','error','system')),
+  summary TEXT,
+  payload TEXT,
+  timestamp TEXT DEFAULT (datetime('now'))
+);
+
+-- Projects table for lifecycle tracking
+CREATE TABLE IF NOT EXISTS projects (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  plan_dir TEXT,
+  workspace_id TEXT DEFAULT 'default' REFERENCES workspaces(id),
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 CREATE INDEX IF NOT EXISTS idx_tasks_assigned ON tasks(assigned_agent_id);
@@ -174,4 +231,11 @@ CREATE INDEX IF NOT EXISTS idx_activities_task ON task_activities(task_id, creat
 CREATE INDEX IF NOT EXISTS idx_deliverables_task ON task_deliverables(task_id);
 CREATE INDEX IF NOT EXISTS idx_openclaw_sessions_task ON openclaw_sessions(task_id);
 CREATE INDEX IF NOT EXISTS idx_planning_questions_task ON planning_questions(task_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_lifecycle_project ON lifecycle_phases(project_id);
+CREATE INDEX IF NOT EXISTS idx_activity_agent ON activity_events(agent_id);
+CREATE INDEX IF NOT EXISTS idx_activity_timestamp ON activity_events(timestamp);
+CREATE INDEX IF NOT EXISTS idx_sync_entity ON sync_log(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_task_deps_task ON task_dependencies(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_deps_depends ON task_dependencies(depends_on_id);
+CREATE INDEX IF NOT EXISTS idx_projects_workspace ON projects(workspace_id);
 `;

@@ -7,7 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { AgentsSidebar } from '@/components/AgentsSidebar';
 import { MissionQueue } from '@/components/MissionQueue';
-import { LiveFeed } from '@/components/LiveFeed';
+import { ActivityFeed } from '@/components/activity-feed';
 import { SSEDebugPanel } from '@/components/SSEDebugPanel';
 import { useMissionControl } from '@/lib/store';
 import { useSSE } from '@/hooks/useSSE';
@@ -208,8 +208,8 @@ export default function WorkspacePage() {
         {/* Main Content Area */}
         <MissionQueue workspaceId={workspace.id} />
 
-        {/* Live Feed */}
-        <LiveFeed />
+        {/* Activity Feed */}
+        <ActivityFeed workspaceId={workspace.id} />
       </div>
 
       {/* Debug Panel - only shows when debug mode enabled */}

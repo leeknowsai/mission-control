@@ -216,6 +216,82 @@ export interface PlanningState {
   isLocked: boolean;
 }
 
+// === LeeAgentsOffice Extensions ===
+
+// Lifecycle pipeline types
+export type PhaseType = 'requirements' | 'planning' | 'research' | 'implementation' | 'testing' | 'review' | 'deploy';
+export type PhaseStatus = 'pending' | 'active' | 'blocked' | 'complete' | 'skipped';
+
+export interface LifecyclePhase {
+  id: number;
+  project_id: string;
+  phase: PhaseType;
+  status: PhaseStatus;
+  agent_id?: string;
+  started_at?: string;
+  completed_at?: string;
+  plan_file_path?: string;
+  metadata?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  plan_dir?: string;
+  workspace_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Task dependency DAG types
+export type DependencyType = 'blocks' | 'soft';
+
+export interface TaskDependency {
+  id: number;
+  task_id: string;
+  depends_on_id: string;
+  dep_type: DependencyType;
+  created_at: string;
+}
+
+// Sync engine types
+export type SyncSource = 'dashboard' | 'filesystem';
+export type SyncStatus = 'synced' | 'syncing' | 'conflict';
+
+export interface SyncLogEntry {
+  id: number;
+  source: SyncSource;
+  entity_type: string;
+  entity_id: string;
+  change: string;
+  conflict_resolved: boolean;
+  resolution?: string;
+  timestamp: string;
+}
+
+export interface SyncConflict {
+  id: number;
+  field: string;
+  dashboard_value: string;
+  file_value: string;
+  entity_type: string;
+  entity_id: string;
+}
+
+// Activity stream types
+export type ActivityEventType = 'tool_call' | 'file_edit' | 'message' | 'status_change' | 'error' | 'system';
+
+export interface ActivityEvent {
+  id: number;
+  agent_id: string;
+  event_type: ActivityEventType;
+  summary?: string;
+  payload?: string;
+  timestamp: string;
+}
+
 // API request/response types
 export interface CreateAgentRequest {
   name: string;

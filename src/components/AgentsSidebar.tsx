@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, ChevronRight, Zap, ZapOff, Loader2 } from 'lucide-react';
+import useSWR from 'swr';
 import { useMissionControl } from '@/lib/store';
 import type { Agent, AgentStatus, OpenClawSession } from '@/lib/types';
 import { AgentModal } from './AgentModal';
+
+const swrFetcher = (url: string) => fetch(url).then((r) => r.json());
 
 type FilterTab = 'all' | 'working' | 'standby';
 
@@ -19,6 +22,22 @@ export function AgentsSidebar({ workspaceId }: AgentsSidebarProps) {
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [connectingAgentId, setConnectingAgentId] = useState<string | null>(null);
   const [activeSubAgents, setActiveSubAgents] = useState(0);
+
+  // Fetch recent activity counts per agent (last 24h)
+  const after24h = new Date(Date.now() - 86400000).toISOString();
+  const { data: activityData } = useSWR<{ events: { agent_id: string }[]; total: number }>(
+    `/api/activity?limit=100&after=${after24h}`,
+    swrFetcher,
+    { refreshInterval: 30000 }
+  );
+
+  // Build a map of agent_id → event count
+  const agentEventCounts: Record<string, number> = {};
+  if (activityData?.events) {
+    for (const ev of activityData.events) {
+      agentEventCounts[ev.agent_id] = (agentEventCounts[ev.agent_id] ?? 0) + 1;
+    }
+  }
 
   // Load OpenClaw session status for all agents on mount
   useEffect(() => {
@@ -186,6 +205,11 @@ export function AgentsSidebar({ workspaceId }: AgentsSidebarProps) {
                     <span className="font-medium text-sm truncate">{agent.name}</span>
                     {!!agent.is_master && (
                       <span className="text-xs text-mc-accent-yellow">★</span>
+                    )}
+                    {agentEventCounts[agent.id] != null && agentEventCounts[agent.id] > 0 && (
+                      <span className="ml-auto text-xs bg-mc-accent/20 text-mc-accent px-1.5 py-0.5 rounded-full leading-none">
+                        {agentEventCounts[agent.id]}
+                      </span>
                     )}
                   </div>
                   <div className="text-xs text-mc-text-secondary truncate">
